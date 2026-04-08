@@ -500,26 +500,19 @@ def crop_to_aspect_ratio(image_path: Path, target_aspect: str) -> bool:
 # Picsum fallback
 # ---------------------------------------------------------------------------
 
-def fetch_picsum(size: str, output_path: Path) -> bool:
-    """从 Picsum Photos 下载随机封面图。"""
+def fetch_picsum(size: str, output_path: Path) -> str | None:
+    """Return a stable public Picsum URL — no download or upload needed."""
+    import random
     try:
         width, height = (int(x) for x in size.split("*"))
     except ValueError:
         print(f"[Picsum] 尺寸格式无效：{size}")
-        return False
+        return None
 
-    url = f"https://picsum.photos/{width}/{height}"
-    print(f"[Picsum] 使用随机封面：{url}")
-
-    try:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with urllib.request.urlopen(url, timeout=30) as resp:
-            output_path.write_bytes(resp.read())
-        print(f"[OK] Picsum 封面已保存：{output_path}")
-        return True
-    except Exception as e:
-        print(f"[Picsum] 下载失败：{e}")
-        return False
+    seed = random.randint(1, 99999)
+    url = f"https://picsum.photos/seed/{seed}/{width}/{height}"
+    print(f"[Picsum] 随机封面 URL：{url}")
+    return url
 
 
 # ---------------------------------------------------------------------------
@@ -662,11 +655,11 @@ def main():
             print(f"[Error] {e}")
             sys.exit(1)
 
-    success = False
+    public_url: str | None = None
 
     if args.no_ai:
         print("[Skip] 已指定 --no-ai，跳过 AI 生成，改用随机封面")
-        success = fetch_picsum(args.size, output_path)
+        public_url = fetch_picsum(args.size, output_path)
     else:
         # 尝试 AI 生成
         success = generate_ai(
@@ -675,26 +668,24 @@ def main():
             negative=args.negative,
         )
 
-        # AI 失败时：检查是否授权 fallback
-        if not success:
+        if success:
+            # AI 生成成功：上传到 transfer.sh 获取公开 URL
+            public_url = upload_to_transfer_sh(output_path)
+        else:
+            # AI 失败：检查是否授权 fallback
             if args.allow_fallback:
                 print("[Fallback] AI 生成失败，用户已授权使用随机封面...")
-                success = fetch_picsum(args.size, output_path)
+                public_url = fetch_picsum(args.size, output_path)
             else:
                 print("[Error] AI 封面生成失败。如需使用随机封面，请使用 --allow-fallback 或 --no-ai 参数")
-                sys.exit(2)  # exit 2 = AI 失败但未授权 fallback
+                sys.exit(2)
 
-    if not success:
+    if not public_url:
         print("[Error] 封面生成失败")
         sys.exit(1)
 
-    # Upload to transfer.sh for user-accessible URL (all paths)
-    public_url = upload_to_transfer_sh(output_path)
-    if public_url:
-        print(f"[SHARE] ![{output_path.stem}]({public_url})")
-        print(f"[LINK]  {public_url}")
-    else:
-        print(f"[SHARE] Upload failed. Local path: {output_path}")
+    print(f"[SHARE] ![{output_path.stem}]({public_url})")
+    print(f"[LINK]  {public_url}")
 
 
 if __name__ == "__main__":
