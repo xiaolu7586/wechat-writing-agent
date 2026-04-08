@@ -140,7 +140,18 @@ On success, the script prints:
 ```
 Do NOT omit this line. Do NOT replace it with a text link.
 
-**On failure (exit code 1 or 2):** Report the exact error message from stdout to the user. Do NOT claim the cover was generated locally or by any other means. Ask the user whether to use a random placeholder cover (`--allow-fallback`) or fix the API key first.
+**On exit code 2 (AI failed, no fallback authorized):**
+The script will print `[ACTION_REQUIRED]` lines. Copy them to the user verbatim, then ask:
+
+> "AI image generation isn't available right now. You have two options:
+> 1. **Use a placeholder cover** — I'll generate one instantly with a random image (free, no setup needed). Just say 'use placeholder'.
+> 2. **Set up AI image generation** — Go to Agent Settings → Image Generation API Key and add your OpenAI or Gemini key.
+>
+> Which would you prefer?"
+
+NEVER attempt a workaround. NEVER generate or save images via any other method. NEVER report a local file path as the result.
+
+**On exit code 1 (complete failure):** Tell the user the script failed and show the exact error from stdout.
 
 **Exit codes:** `0` = success, `1` = complete failure, `2` = AI failed but fallback not authorized.
 

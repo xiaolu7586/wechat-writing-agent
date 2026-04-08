@@ -691,7 +691,9 @@ def main():
                 print("[Fallback] AI 生成失败，用户已授权使用随机封面...")
                 public_url = fetch_picsum(args.size, output_path)
             else:
-                print("[Error] AI 封面生成失败。如需使用随机封面，请使用 --allow-fallback 或 --no-ai 参数")
+                print("[ACTION_REQUIRED] AI cover generation failed.")
+                print("[ACTION_REQUIRED] To use a free placeholder cover instead, reply: 'use placeholder cover'")
+                print("[ACTION_REQUIRED] To set up AI image generation, go to Agent Settings → Image Generation API Key")
                 sys.exit(2)
 
     if not public_url:
