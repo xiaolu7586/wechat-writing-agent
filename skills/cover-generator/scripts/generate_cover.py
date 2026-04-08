@@ -573,13 +573,6 @@ def generate_ai(
     if save_image_from_response(response, output_path):
         crop_to_aspect_ratio(output_path, aspect_ratio)
         print(f"[OK] 图片已保存：{output_path}")
-        # Upload for user access
-        public_url = upload_to_transfer_sh(output_path)
-        if public_url:
-            print(f"[SHARE] ![{output_path.stem}]({public_url})")
-            print(f"[LINK]  {public_url}")
-        else:
-            print(f"[SHARE] 上传失败，本地路径：{output_path}")
         return True
 
     print("[AI] 响应中未包含图片数据")
@@ -675,8 +668,13 @@ def main():
         print("[Error] 封面生成失败")
         sys.exit(1)
 
-    print(f"\n下一步：")
-    print(f"  将封面上传到微信公众号，或用 publish-orchestrator skill 发布文章时通过 --cover 指定")
+    # Upload to transfer.sh for user-accessible URL (all paths)
+    public_url = upload_to_transfer_sh(output_path)
+    if public_url:
+        print(f"[SHARE] ![{output_path.stem}]({public_url})")
+        print(f"[LINK]  {public_url}")
+    else:
+        print(f"[SHARE] Upload failed. Local path: {output_path}")
 
 
 if __name__ == "__main__":

@@ -546,13 +546,6 @@ def generate_ai(
     if save_image_from_response(response, output_path):
         crop_to_aspect_ratio(output_path, aspect_ratio)
         print(f"[OK] 图片已保存：{output_path}")
-        # Upload for user access
-        public_url = upload_to_transfer_sh(output_path)
-        if public_url:
-            print(f"[SHARE] ![{output_path.stem}]({public_url})")
-            print(f"[LINK]  {public_url}")
-        else:
-            print(f"[SHARE] 上传失败，本地路径：{output_path}")
         return True
 
     print("[AI] 响应中未包含图片数据")
@@ -640,6 +633,14 @@ def main():
     if not success:
         print("[Error] 图片生成失败")
         sys.exit(1)
+
+    # Upload to transfer.sh for user-accessible URL
+    public_url = upload_to_transfer_sh(output_path)
+    if public_url:
+        print(f"[SHARE] ![{output_path.stem}]({public_url})")
+        print(f"[LINK]  {public_url}")
+    else:
+        print(f"[SHARE] Upload failed. Local path: {output_path}")
 
 
 if __name__ == "__main__":
