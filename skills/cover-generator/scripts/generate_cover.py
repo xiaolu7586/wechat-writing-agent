@@ -501,7 +501,11 @@ def crop_to_aspect_ratio(image_path: Path, target_aspect: str) -> bool:
 # ---------------------------------------------------------------------------
 
 def fetch_picsum(size: str, output_path: Path) -> str | None:
-    """Return a stable public Picsum URL — no download or upload needed."""
+    """Download a Picsum placeholder image locally and return its public URL.
+
+    Saves locally so publish-orchestrator can read the file for WeChat upload.
+    Returns the stable seed-based Picsum URL for chat preview.
+    """
     import random
     try:
         width, height = (int(x) for x in size.split("*"))
@@ -510,9 +514,19 @@ def fetch_picsum(size: str, output_path: Path) -> str | None:
         return None
 
     seed = random.randint(1, 99999)
-    url = f"https://picsum.photos/seed/{seed}/{width}/{height}"
-    print(f"[Picsum] 随机封面 URL：{url}")
-    return url
+    public_url = f"https://picsum.photos/seed/{seed}/{width}/{height}"
+    print(f"[Picsum] 随机封面：{public_url}")
+
+    # Also save locally for publish-orchestrator
+    try:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with urllib.request.urlopen(public_url, timeout=30) as resp:
+            output_path.write_bytes(resp.read())
+        print(f"[OK] Picsum 封面已保存：{output_path}")
+    except Exception as e:
+        print(f"[Picsum] 本地保存失败（不影响预览）：{e}")
+
+    return public_url
 
 
 # ---------------------------------------------------------------------------
