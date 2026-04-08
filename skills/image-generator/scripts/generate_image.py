@@ -288,20 +288,40 @@ def build_openai_client(base_url: str, uid: str, token: str) -> OpenAI:
 
 
 def upload_to_transfer_sh(file_path: Path) -> str | None:
-    """Upload file to transfer.sh and return public URL, or None on failure."""
+    """Upload file to a public hosting service and return URL. Tries multiple services."""
     import urllib.request as urlreq
+
+    with open(file_path, "rb") as f:
+        data = f.read()
+
+    # Try transfer.sh
     try:
-        with open(file_path, "rb") as f:
-            data = f.read()
         req = urlreq.Request(
             f"https://transfer.sh/{file_path.name}",
             data=data, method="PUT"
         )
         req.add_header("Max-Days", "14")
         with urlreq.urlopen(req, timeout=30) as resp:
-            return resp.read().decode().strip()
+            url = resp.read().decode().strip()
+            if url.startswith("http"):
+                return url
     except Exception:
-        return None
+        pass
+
+    # Try 0x0.st as fallback
+    try:
+        import subprocess
+        result = subprocess.run(
+            ["curl", "-s", "-F", f"file=@{file_path}", "https://0x0.st"],
+            capture_output=True, text=True, timeout=30
+        )
+        url = result.stdout.strip()
+        if url.startswith("http"):
+            return url
+    except Exception:
+        pass
+
+    return None
 
 def load_image_auth() -> tuple[str, str, str, str] | None:
     """
