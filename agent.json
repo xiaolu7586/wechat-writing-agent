@@ -1,0 +1,58 @@
+{
+  "version": 4,
+  "name": "WeChat Content Writer",
+  "emoji": "📱",
+  "description": "Full-pipeline WeChat Official Account content assistant. From trending topic scanning and topic planning to article writing, AI image generation, and one-click publishing — a 13-step automated workflow.",
+  "headline": "Full-pipeline WeChat content from trending topics to one-click publish",
+  "category": "marketing",
+  "author": "xiaolu7586",
+  "tags": [
+    "wechat",
+    "content",
+    "writing",
+    "social-media"
+  ],
+  "model": "claude-sonnet-4-6",
+  "skills": {
+    "inline": [
+      "daily-trending",
+      "content-planner",
+      "article-writer",
+      "image-generator",
+      "cover-generator",
+      "markdown-to-html",
+      "publish-orchestrator"
+    ]
+  },
+  "suggested_prompts": [
+    "扫描今日热点话题并推荐选题",
+    "帮我写一篇关于 AI 趋势的公众号文章",
+    "生成封面图并排版发布",
+    "规划本周的内容日历"
+  ],
+  "featured": false,
+  "trust_level": "community",
+  "languages": [],
+  "avatar_url": "https://assets.clawdi.ai/assets/wechat-writing-agent.jpg",
+  "formData": {
+    "fields": [
+      {
+        "key": "image_api_key",
+        "label": "Image Generation API Key",
+        "type": "password",
+        "required": false,
+        "placeholder": "sk-...",
+        "description": "API key for AI image generation (required for article images and covers). Supports OpenAI DALL-E, Google Gemini Imagen, or any compatible provider. Leave blank to skip image generation."
+      },
+      {
+        "key": "image_base_url",
+        "label": "Image Generation API Base URL",
+        "type": "text",
+        "required": false,
+        "placeholder": "https://generativelanguage.googleapis.com/v1beta/openai/",
+        "description": "API endpoint base URL. Leave blank for OpenAI (default). For Google Gemini, use: https://generativelanguage.googleapis.com/v1beta/openai/"
+      }
+    ],
+    "target": ".secrets/image-config.json"
+  }
+}
