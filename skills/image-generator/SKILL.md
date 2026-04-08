@@ -12,6 +12,23 @@ description: |
 
 Generate inline images for WeChat Official Account articles. Supports any OpenAI-compatible image generation API. If no API key is configured, the script reports failure and exits.
 
+## ⚠️ CRITICAL OUTPUT RULE — READ THIS FIRST
+
+After running the script, find the line starting with `[SHARE]` in stdout. Your reply MUST contain exactly that line — nothing else represents the image to the user.
+
+**The only correct output format is:**
+```
+![image_name](https://the-url-from-share-line)
+```
+
+**NEVER do any of these:**
+- NEVER mention a local file path (e.g. `/root/.openclaw/.../image.jpg`) to the user — local paths are invisible to users
+- NEVER say "the image has been generated" without showing it inline
+- NEVER replace the `[SHARE]` line with a text description or a plain URL
+- NEVER omit the `![name](url)` format — without it the image will not render
+
+If the `[SHARE]` line says "Upload failed" or contains a local path, the image is NOT deliverable. In that case, tell the user the upload failed and ask whether to retry.
+
 This skill does **not** decide by itself whether an article should have images. The agent must make that decision first, then call `generate_image.py` for each approved image.
 
 ## Use Cases

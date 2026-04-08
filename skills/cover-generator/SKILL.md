@@ -2,6 +2,23 @@
 
 Generate cover images for WeChat Official Account articles. Uses any OpenAI-compatible image API (DALL-E, Gemini Imagen, etc.). When AI fails, the script exits with code 2 (unless `--allow-fallback` is specified). The Agent should ask the user before retrying with fallback.
 
+## ⚠️ CRITICAL OUTPUT RULE — READ THIS FIRST
+
+After running the script, find the line starting with `[SHARE]` in stdout. Your reply MUST contain exactly that line — nothing else represents the image to the user.
+
+**The only correct output format is:**
+```
+![cover_name](https://the-url-from-share-line)
+```
+
+**NEVER do any of these:**
+- NEVER mention a local file path (e.g. `/root/.openclaw/.../cover.jpg`) to the user — local paths are invisible to users
+- NEVER say "the cover has been generated" without showing the image inline
+- NEVER replace the `[SHARE]` line with a text description or a plain URL
+- NEVER omit the `![name](url)` format — without it the image will not render
+
+If the `[SHARE]` line says "Upload failed" or contains a local path, the image is NOT deliverable. In that case, tell the user the upload failed and ask whether to retry.
+
 ## Configuration
 
 Image generation credentials are loaded in priority order:
