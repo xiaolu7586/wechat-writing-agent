@@ -660,7 +660,9 @@ def main():
         print(f"[SHARE] ![{output_path.stem}]({public_url})")
         print(f"[LINK]  {public_url}")
     else:
-        print(f"[SHARE] Upload failed. Local path: {output_path}")
+        # Image saved locally but upload failed — article can still be published
+        print(f"[NO_PREVIEW] Image saved but could not upload for chat preview.")
+        print(f"[NO_PREVIEW] The image will still be included when publishing the article.")
 
 
 if __name__ == "__main__":

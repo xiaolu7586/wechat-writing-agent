@@ -696,12 +696,17 @@ def main():
                 print("[ACTION_REQUIRED] To set up AI image generation, go to Agent Settings → Image Generation API Key")
                 sys.exit(2)
 
-    if not public_url:
+    if public_url:
+        print(f"[SHARE] ![{output_path.stem}]({public_url})")
+        print(f"[LINK]  {public_url}")
+    elif output_path.exists():
+        # Image saved locally but upload failed — no chat preview, but publishing still works
+        print(f"[NO_PREVIEW] Cover saved but could not upload for chat preview.")
+        print(f"[NO_PREVIEW] Publishing to WeChat will still work normally.")
+        # Exit 0 so publish-orchestrator can proceed with local file
+    else:
         print("[Error] 封面生成失败")
         sys.exit(1)
-
-    print(f"[SHARE] ![{output_path.stem}]({public_url})")
-    print(f"[LINK]  {public_url}")
 
 
 if __name__ == "__main__":

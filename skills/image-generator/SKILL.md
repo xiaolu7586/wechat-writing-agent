@@ -27,7 +27,9 @@ After running the script, find the line starting with `[SHARE]` in stdout. Your 
 - NEVER replace the `[SHARE]` line with a text description or a plain URL
 - NEVER omit the `![name](url)` format — without it the image will not render
 
-If the `[SHARE]` line says "Upload failed" or contains a local path, the image is NOT deliverable. In that case, tell the user the upload failed and ask whether to retry.
+If you see `[NO_PREVIEW]` lines: tell the user "Image generated successfully. Chat preview isn't available right now, but the image is saved and will appear normally when publishing the article."
+
+If the script exits with code 1: tell the user generation failed and show the exact error.
 
 This skill does **not** decide by itself whether an article should have images. The agent must make that decision first, then call `generate_image.py` for each approved image.
 
