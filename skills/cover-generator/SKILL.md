@@ -151,7 +151,7 @@ The script will print `[ACTION_REQUIRED]` lines. Copy them to the user verbatim,
 
 NEVER attempt a workaround. NEVER generate or save images via any other method. NEVER report a local file path as the result.
 
-**On `[NO_PREVIEW]` lines:** Tell the user: "Cover generated successfully. Chat preview isn't available right now (upload service unreachable), but your cover is saved and will appear normally when you publish to WeChat."
+**On `[NO_PREVIEW]` lines:** Tell the user: "Cover generated successfully but chat preview isn't available (upload service unreachable). If you publish via API (`wechat-api.ts`), the cover will upload correctly. If you publish via browser, you may need to upload the cover manually in the WeChat editor."
 
 **On exit code 1 (complete failure):** Tell the user the script failed and show the exact error from stdout.
 
